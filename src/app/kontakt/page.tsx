@@ -49,7 +49,7 @@ export default function KontaktPage() {
 
       <div className="relative mx-auto w-full max-w-3xl px-5 pb-16 pt-8 sm:px-10 sm:pb-24 sm:pt-10">
         <Reveal className="text-center">
-          <h1 className="font-sans text-[32px] font-extrabold uppercase leading-tight tracking-tight text-foreground sm:text-[56px]">
+          <h1 className="font-display text-[32px] font-extrabold uppercase leading-tight tracking-tight text-foreground sm:text-[56px]">
             Hajde da napravimo vaš sajt
           </h1>
           <p className="mt-1 text-[16px] leading-relaxed text-[#525252] sm:text-[20px]">

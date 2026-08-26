@@ -8,7 +8,9 @@ import { SITE_URL } from "@/lib/site";
 const syne = Syne({
   variable: "--font-syne",
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
+  // Headings are the only Syne on the site and they are all 800; 600 and 700
+  // were downloaded and never drawn with.
+  weight: ["800"],
 });
 
 const inter = Inter({
