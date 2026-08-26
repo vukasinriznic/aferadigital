@@ -3,6 +3,7 @@ import { Syne, Inter } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { Cursor } from "@/components/Cursor";
+import { IntroLoader } from "@/components/IntroLoader";
 import { SITE_URL } from "@/lib/site";
 
 const syne = Syne({
@@ -19,7 +20,7 @@ const inter = Inter({
 
 const title = "Afera Digital | Web sajtovi i web aplikacije";
 const description =
-  "Afera Digital gradi brze, pristupačne sajtove i web aplikacije za lokalne biznise. Recite nam o projektu, javljamo se u roku od 24h.";
+  "Afera Digital gradi brze i pristupačne web sajtove i web aplikacije. Recite nam o projektu, javljamo se u roku od 24h.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -71,7 +72,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
         <Cursor />
-        {children}
+        {/* Wraps both pages so the intro plays once per session wherever the
+            visitor lands, rather than replaying on the way to the form. */}
+        <IntroLoader>{children}</IntroLoader>
         <Analytics />
       </body>
     </html>
