@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     description,
     url: SITE_URL,
     siteName: "Afera Digital",
-    images: [{ url: "/images/profile.png", width: 1254, height: 1254 }],
+    images: [{ url: "/images/profile.png", width: 975, height: 1536 }],
     locale: "sr_RS",
     type: "website",
   },
