@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-// TODO: add Andrej's email here once we split leads between us, e.g. [TO_EMAIL, "andrej@..."]
-const TO_EMAIL = "vukasin.afera@gmail.com";
+const TO_EMAILS = ["vukasin.afera@gmail.com", "afera.andrej@gmail.com"];
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -26,7 +25,7 @@ export async function POST(request: Request) {
   try {
     const { error } = await resend.emails.send({
       from: "Afera Digital kontakt <onboarding@resend.dev>",
-      to: TO_EMAIL,
+      to: TO_EMAILS,
       replyTo: email,
       subject: `Novi upit sa sajta — ${name}`,
       text: [
