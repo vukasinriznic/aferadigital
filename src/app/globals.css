@@ -26,6 +26,14 @@ body {
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
 }
 
-* {
+/* Hide the native cursor only once the custom one is actually tracking. Doing it
+   unconditionally means a blocked or slow script leaves the visitor with no
+   cursor at all -- on a page whose entire job is getting the form filled in. */
+html.custom-cursor * {
   cursor: none !important;
+}
+
+/* Text fields keep their caret: precision matters more than the effect here. */
+html.custom-cursor :is(input, textarea) {
+  cursor: auto !important;
 }

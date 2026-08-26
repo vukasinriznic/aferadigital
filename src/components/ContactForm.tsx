@@ -59,17 +59,11 @@ export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [budget, setBudget] = useState<string | null>(null);
   const [urgency, setUrgency] = useState<string | null>(null);
-  const [showValidation, setShowValidation] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!budget || !urgency) {
-      setShowValidation(true);
-      return;
-    }
-    setShowValidation(false);
     setServerError(null);
     setStatus("sending");
 
@@ -143,6 +137,7 @@ export function ContactForm() {
             name="name"
             type="text"
             required
+            autoComplete="name"
             placeholder="Novak Đoković"
             className={inputClass}
           />
@@ -157,18 +152,24 @@ export function ContactForm() {
             name="email"
             type="email"
             required
+            autoComplete="email"
+            inputMode="email"
             placeholder="novak@gmail.com"
             className={inputClass}
           />
         </div>
 
         <div>
-          <span className={labelClass}>Budžet</span>
+          <span className={labelClass}>
+            Budžet <span className="font-normal text-[#a2a2a2]">(opciono)</span>
+          </span>
           <PillGroup options={budgetOptions} selected={budget} onSelect={setBudget} />
         </div>
 
         <div>
-          <span className={labelClass}>Hitnost</span>
+          <span className={labelClass}>
+            Hitnost <span className="font-normal text-[#a2a2a2]">(opciono)</span>
+          </span>
           <PillGroup options={urgencyOptions} selected={urgency} onSelect={setUrgency} />
         </div>
 
@@ -195,12 +196,6 @@ export function ContactForm() {
         >
           {status === "sending" ? "Šaljem..." : "Pošaljite poruku"}
         </button>
-
-        {showValidation && (
-          <p className="text-sm font-medium text-red-500">
-            Izaberite budžet i hitnost pre slanja.
-          </p>
-        )}
 
         {status === "error" &&
           (serverError ? (

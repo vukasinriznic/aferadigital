@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { motion, useMotionValue, useSpring } from "motion/react";
 
-function getIsTouch() {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia("(pointer: coarse)").matches;
+const TOUCH_QUERY = "(pointer: coarse)";
+
+function subscribeToPointer(onChange: () => void) {
+  const mq = window.matchMedia(TOUCH_QUERY);
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
 }
 
 export function Cursor() {
@@ -14,19 +17,25 @@ export function Cursor() {
   const springX = useSpring(x, { stiffness: 400, damping: 28 });
   const springY = useSpring(y, { stiffness: 400, damping: 28 });
   const [visible, setVisible] = useState(false);
-  const [isTouch, setIsTouch] = useState(false);
-
-  useEffect(() => {
-    setIsTouch(getIsTouch());
-  }, []);
+  // Server renders as non-touch, then this settles on the client without the
+  // cascading render an effect-plus-setState would cause.
+  const isTouch = useSyncExternalStore(
+    subscribeToPointer,
+    () => window.matchMedia(TOUCH_QUERY).matches,
+    () => false,
+  );
 
   useEffect(() => {
     if (isTouch) return;
+
+    const root = document.documentElement;
 
     const handleMove = (e: MouseEvent) => {
       x.set(e.clientX);
       y.set(e.clientY);
       setVisible(true);
+      // Only now is the dot on screen, so it is safe to hide the native cursor.
+      root.classList.add("custom-cursor");
     };
     const handleLeave = () => setVisible(false);
 
@@ -34,7 +43,8 @@ export function Cursor() {
     document.documentElement.addEventListener("mouseleave", handleLeave, { passive: true });
     return () => {
       window.removeEventListener("mousemove", handleMove);
-      document.documentElement.removeEventListener("mouseleave", handleLeave);
+      root.removeEventListener("mouseleave", handleLeave);
+      root.classList.remove("custom-cursor");
     };
   }, [isTouch, x, y]);
 

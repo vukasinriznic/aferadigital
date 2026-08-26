@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { CallButton } from "@/components/CallButton";
 import { ContactForm } from "@/components/ContactForm";
 import { IntroLoader } from "@/components/IntroLoader";
 import { InstagramIcon } from "@/components/icons/social-icons";
@@ -34,6 +35,10 @@ export default function Home() {
             <p className="mt-1 text-[16px] leading-relaxed text-[#525252] sm:text-[20px]">
               Recite nam više o projektu, javljamo se brzo.
             </p>
+
+            <div className="mt-6 flex justify-center">
+              <CallButton />
+            </div>
           </Reveal>
 
           <Reveal className="mt-4">
