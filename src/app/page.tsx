@@ -9,11 +9,14 @@ const ANDREJ_URL = "https://www.andrejdostanic.me";
 const VUKASIN_URL = "https://www.vukasinriznic.me";
 const AFERA_IG_URL = "https://www.instagram.com/afera.digital/";
 
-const pillClass =
-  "flex items-center gap-2.5 rounded-full border border-border bg-white py-2 pl-2 pr-4 text-base font-normal text-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-md";
+// Tighter type and padding below sm: two pills to a row on a phone leaves about
+// 160px each, which the full-size pill overruns and the label wraps to two lines.
+const pillBase =
+  "flex items-center gap-2 sm:gap-2.5 rounded-full whitespace-nowrap py-2 pl-2 pr-3 sm:pr-4 text-sm sm:text-base font-normal shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md";
 
-const darkPillClass =
-  "flex items-center gap-2.5 rounded-full border border-white/10 bg-black py-1.5 pl-1.5 pr-4 text-base font-normal text-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md";
+const pillClass = `${pillBase} border border-border bg-white text-foreground hover:border-foreground/20`;
+
+const darkPillClass = `${pillBase} border border-white/10 bg-black py-1.5 pl-1.5 text-white`;
 
 export default function Home() {
   return (
@@ -42,8 +45,12 @@ export default function Home() {
           </Reveal>
         </div>
 
-        <Reveal className="relative mx-auto w-full max-w-3xl px-5 pb-16 pt-8 sm:px-10 sm:pb-24">
-          <ul className="flex flex-row flex-wrap items-center justify-center gap-3">
+        {/* Wider than the form: four pills in a single row need more room than
+            the form's width leaves, and squeezing them there wrapped the text. */}
+        <Reveal className="relative mx-auto w-full max-w-4xl px-5 pb-16 pt-8 sm:px-10 sm:pb-24">
+          {/* Two columns until the row genuinely fits: Vukašin and Andrej on the
+              left, Afera Digital and the call button on the right. */}
+          <ul className="grid grid-cols-2 items-center justify-items-center gap-3 lg:flex lg:flex-row lg:justify-between lg:gap-2">
             <li>
               <a href={VUKASIN_URL} target="_blank" rel="noopener noreferrer" className={darkPillClass}>
                 <Image
@@ -54,7 +61,10 @@ export default function Home() {
                   className="h-6 w-6 rounded-full object-cover"
                   style={{ objectPosition: "center 10%" }}
                 />
-                Vukašin Riznić
+                {/* One flex item, or the pill's gap lands between the first name
+                    and the surname on top of the space. Surname only shows once
+                    the column is wide enough; narrower, it overflows the pill. */}
+                <span>Vukašin<span className="hidden min-[372px]:inline">&nbsp;Riznić</span></span>
               </a>
             </li>
             <li>
@@ -75,7 +85,7 @@ export default function Home() {
                   className="h-6 w-6 rounded-full object-cover"
                   style={{ objectPosition: "center 10%" }}
                 />
-                Andrej Dostanić
+                <span>Andrej<span className="hidden min-[372px]:inline">&nbsp;Dostanić</span></span>
               </a>
             </li>
             <li>

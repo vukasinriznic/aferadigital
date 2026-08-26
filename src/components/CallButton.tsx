@@ -31,7 +31,7 @@ export function CallButton() {
         onClick={handleClick}
         onMouseEnter={() => canHover() && setQrOpen(true)}
         onMouseLeave={() => canHover() && setQrOpen(false)}
-        className="flex items-center gap-2.5 rounded-full border border-border bg-white py-2 pl-2 pr-4 text-base font-normal text-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-md"
+        className="flex items-center gap-2 sm:gap-2.5 rounded-full whitespace-nowrap border border-border bg-white py-2 pl-2 pr-3 sm:pr-4 text-sm sm:text-base font-normal text-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-md"
       >
         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-ghost">
           <Phone size={13} strokeWidth={2} />
