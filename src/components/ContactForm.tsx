@@ -60,6 +60,7 @@ export function ContactForm() {
   const [budget, setBudget] = useState<string | null>(null);
   const [urgency, setUrgency] = useState<string | null>(null);
   const [showValidation, setShowValidation] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -69,6 +70,7 @@ export function ContactForm() {
       return;
     }
     setShowValidation(false);
+    setServerError(null);
     setStatus("sending");
 
     const form = e.currentTarget;
@@ -79,6 +81,7 @@ export function ContactForm() {
       budget: budgetOptions.find((o) => o.value === budget)?.label,
       urgency: urgencyOptions.find((o) => o.value === urgency)?.label,
       description: formData.get("description"),
+      website: formData.get("website"),
     };
 
     try {
@@ -88,7 +91,14 @@ export function ContactForm() {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("failed");
+      if (!res.ok) {
+        // Surface the server's wording (rate limit, invalid email) so a blocked
+        // visitor knows to wait rather than hammering the button.
+        const data = await res.json().catch(() => null);
+        setServerError(data?.error ?? null);
+        setStatus("error");
+        return;
+      }
 
       setStatus("success");
       form.reset();
@@ -113,8 +123,16 @@ export function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-md border border-[#525252] bg-white p-6 shadow-sm sm:p-8"
+      className="relative rounded-md border border-[#525252] bg-white p-6 shadow-sm sm:p-8"
     >
+      {/* Honeypot: moved off-screen rather than display:none, which bots skip.
+          Hidden from assistive tech and the tab order so no real visitor can
+          reach it -- anything that fills it in is automated. */}
+      <div className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden>
+        <label htmlFor="website">Website</label>
+        <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+      </div>
+
       <div className="flex flex-col gap-6">
         <div>
           <label htmlFor="name" className={labelClass}>
@@ -184,15 +202,18 @@ export function ContactForm() {
           </p>
         )}
 
-        {status === "error" && (
-          <p className="text-sm font-medium text-red-500">
-            Nešto nije u redu, pokušajte ponovo ili nam pišite direktno na{" "}
-            <a href="mailto:vukasin.afera@gmail.com" className="underline">
-              vukasin.afera@gmail.com
-            </a>
-            .
-          </p>
-        )}
+        {status === "error" &&
+          (serverError ? (
+            <p className="text-sm font-medium text-red-500">{serverError}</p>
+          ) : (
+            <p className="text-sm font-medium text-red-500">
+              Nešto nije u redu, pokušajte ponovo ili nam pišite direktno na{" "}
+              <a href="mailto:vukasin.afera@gmail.com" className="underline">
+                vukasin.afera@gmail.com
+              </a>
+              .
+            </p>
+          ))}
 
         <p className="text-left text-xs text-[#a2a2a2]">
           Nema pritiska, tu smo da pomognemo.
