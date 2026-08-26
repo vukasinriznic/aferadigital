@@ -35,10 +35,6 @@ export default function Home() {
             <p className="mt-1 text-[16px] leading-relaxed text-[#525252] sm:text-[20px]">
               Recite nam više o projektu, javljamo se brzo.
             </p>
-
-            <div className="mt-6 flex justify-center">
-              <CallButton />
-            </div>
           </Reveal>
 
           <Reveal className="mt-4">
@@ -81,6 +77,9 @@ export default function Home() {
                 />
                 Andrej Dostanić
               </a>
+            </li>
+            <li>
+              <CallButton />
             </li>
           </ul>
         </Reveal>
