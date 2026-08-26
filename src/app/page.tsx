@@ -49,6 +49,7 @@ export default function Home() {
                 width={24}
                 height={24}
                 className="h-6 w-6 rounded-full object-cover"
+                style={{ objectPosition: "center 10%" }}
               />
               Vukašin Riznić
             </a>
@@ -69,6 +70,7 @@ export default function Home() {
                 width={24}
                 height={24}
                 className="h-6 w-6 rounded-full object-cover"
+                style={{ objectPosition: "center 10%" }}
               />
               Andrej Dostanić
             </a>
