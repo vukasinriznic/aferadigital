@@ -2,10 +2,15 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
 // Resend's shared onboarding@resend.dev sender may only deliver to the address
-// the Resend account is registered under; adding a second recipient makes the
-// whole request 403 and no one gets the enquiry. Andrej is covered by a Gmail
-// forward until a domain is verified at resend.com/domains.
-const TO_EMAILS = ["vukasin.afera@gmail.com"];
+// the Resend account is registered under; any other recipient makes the whole
+// request 403 and no one gets the enquiry. So the recipient has to move in step
+// with RESEND_API_KEY -- keeping it in the environment lets both change in one
+// go, instead of leaving the form broken between a key swap and a deploy.
+// Comma-separated once a verified domain lifts the single-recipient limit.
+const TO_EMAILS = (process.env.CONTACT_TO_EMAIL ?? "vukasin.afera@gmail.com")
+  .split(",")
+  .map((address) => address.trim())
+  .filter(Boolean);
 
 // Set CONTACT_FROM_EMAIL (e.g. "Afera Digital <kontakt@afera.digital>") once a
 // domain is verified in Resend. Until then we're on the shared sender, which
