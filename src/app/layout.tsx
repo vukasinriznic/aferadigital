@@ -1,0 +1,77 @@
+import type { Metadata } from "next";
+import { Syne, Inter } from "next/font/google";
+import "./globals.css";
+import { Cursor } from "@/components/Cursor";
+import { SITE_URL } from "@/lib/site";
+
+const syne = Syne({
+  variable: "--font-syne",
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+});
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
+const title = "Afera Digital | Web sajtovi i web aplikacije";
+const description =
+  "Afera Digital gradi brze, pristupačne sajtove i web aplikacije za lokalne biznise. Recite nam o projektu, javljamo se u roku od 24h.";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title,
+  description,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title,
+    description,
+    url: SITE_URL,
+    siteName: "Afera Digital",
+    images: [{ url: "/images/profile.png", width: 1254, height: 1254 }],
+    locale: "sr_RS",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/images/profile.png"],
+  },
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Afera Digital",
+  url: SITE_URL,
+  sameAs: [
+    "https://www.instagram.com/afera.digital/",
+    "https://www.vukasinriznic.me",
+  ],
+};
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
+    <html
+      lang="sr"
+      className={`${syne.variable} ${inter.variable} h-full antialiased`}
+    >
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col cursor-none bg-background text-foreground"
+      >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <Cursor />
+        {children}
+      </body>
+    </html>
+  );
+}
