@@ -43,7 +43,7 @@ export default function Home() {
           </Reveal>
 
           <Reveal className="mt-10">
-            <h2 className="text-center font-display text-[22px] font-extrabold uppercase tracking-tight text-foreground sm:text-[26px]">
+            <h2 className="text-center font-sans text-[22px] font-extrabold uppercase tracking-tight text-foreground sm:text-[26px]">
               Želite sajt?
             </h2>
             <Link
@@ -66,7 +66,7 @@ export default function Home() {
           </Reveal>
 
           <Reveal className="mt-10">
-            <h2 className="text-center font-display text-[22px] font-extrabold uppercase tracking-tight text-foreground sm:text-[26px]">
+            <h2 className="text-center font-sans text-[22px] font-extrabold uppercase tracking-tight text-foreground sm:text-[26px]">
               Naš tim
             </h2>
 

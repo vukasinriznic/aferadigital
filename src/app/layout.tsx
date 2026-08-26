@@ -8,15 +8,16 @@ import { SITE_URL } from "@/lib/site";
 const syne = Syne({
   variable: "--font-syne",
   subsets: ["latin"],
-  // Headings are the only Syne on the site and they are all 800; 600 and 700
-  // were downloaded and never drawn with.
+  // Only the Afera wordmark is set in Syne, and only at 800.
   weight: ["800"],
 });
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  // 800 for the uppercase headings: without it the browser synthesises the
+  // weight from 600 and they render mushy rather than sharp.
+  weight: ["400", "500", "600", "800"],
 });
 
 const title = "Afera Digital | Web sajtovi i web aplikacije";
