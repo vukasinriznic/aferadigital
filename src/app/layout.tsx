@@ -3,7 +3,6 @@ import { Syne, Inter } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { Cursor } from "@/components/Cursor";
-import { IntroLoader } from "@/components/IntroLoader";
 import { SITE_URL } from "@/lib/site";
 
 const syne = Syne({
@@ -72,9 +71,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
         <Cursor />
-        {/* Wraps both pages so the intro plays once per session wherever the
-            visitor lands, rather than replaying on the way to the form. */}
-        <IntroLoader>{children}</IntroLoader>
+        {children}
         <Analytics />
       </body>
     </html>
