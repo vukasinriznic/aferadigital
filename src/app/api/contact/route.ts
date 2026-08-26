@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const TO_EMAILS = ["vukasin.afera@gmail.com", "afera.andrej@gmail.com"];
+// Resend's shared onboarding@resend.dev sender may only deliver to the address
+// the Resend account is registered under; adding a second recipient makes the
+// whole request 403 and no one gets the enquiry. Andrej is covered by a Gmail
+// forward until a domain is verified at resend.com/domains.
+const TO_EMAILS = ["vukasin.afera@gmail.com"];
 
 export async function POST(request: Request) {
   const body = await request.json();
