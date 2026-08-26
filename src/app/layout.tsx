@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Syne, Inter } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { Cursor } from "@/components/Cursor";
 import { SITE_URL } from "@/lib/site";
 
@@ -71,6 +72,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
         <Cursor />
         {children}
+        <Analytics />
       </body>
     </html>
   );

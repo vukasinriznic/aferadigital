@@ -43,7 +43,7 @@ export default function Home() {
         </div>
 
         <Reveal className="relative mx-auto w-full max-w-3xl px-5 pb-16 pt-8 sm:px-10 sm:pb-24">
-          <ul className="flex flex-row flex-wrap items-center justify-around gap-3">
+          <ul className="flex flex-row flex-wrap items-center justify-center gap-3">
             <li>
               <a href={VUKASIN_URL} target="_blank" rel="noopener noreferrer" className={darkPillClass}>
                 <Image
