@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion } from "motion/react";
 import Image from "next/image";
 
@@ -13,18 +13,25 @@ type Phase = "cover" | "intro" | "fading" | "gone";
 
 export function IntroLoader({ children }: { children: ReactNode }) {
   const [phase, setPhase] = useState<Phase>("cover");
+  // Decided once and reused: StrictMode runs this effect twice, and re-reading
+  // sessionStorage on the second pass would find the flag the first pass wrote
+  // and skip the intro that was just starting.
+  const playRef = useRef<boolean | null>(null);
 
   useEffect(() => {
-    const skip =
-      sessionStorage.getItem(SEEN_KEY) ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (playRef.current === null) {
+      playRef.current =
+        !sessionStorage.getItem(SEEN_KEY) &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    if (skip) {
+      if (playRef.current) sessionStorage.setItem(SEEN_KEY, "1");
+    }
+
+    if (!playRef.current) {
       setPhase("gone");
       return;
     }
 
-    sessionStorage.setItem(SEEN_KEY, "1");
     setPhase("intro");
 
     // Unmounting is timer-driven, never animation-driven: in a background tab
