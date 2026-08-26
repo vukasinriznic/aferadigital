@@ -3,7 +3,7 @@ import { ContactForm } from "@/components/ContactForm";
 import { InstagramIcon } from "@/components/icons/social-icons";
 import { Reveal } from "@/components/motion/Reveal";
 
-const ANDREJ_URL = "https://andrej-dostanic-portfolio.vercel.app";
+const ANDREJ_URL = "https://www.andrejdostanic.me";
 const VUKASIN_URL = "https://www.vukasinriznic.me";
 const AFERA_IG_URL = "https://www.instagram.com/afera.digital/";
 
