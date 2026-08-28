@@ -27,7 +27,7 @@ export default function KontaktPage() {
   return (
     <div className="relative flex flex-1 flex-col overflow-hidden bg-surface">
       <Image
-        src="/clouds.jpg"
+        src="/cta-waves.svg"
         alt=""
         fill
         aria-hidden
