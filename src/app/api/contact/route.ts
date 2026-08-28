@@ -46,6 +46,67 @@ function rateLimited(ip: string) {
 const clean = (value: unknown, limit: number) =>
   typeof value === "string" ? value.trim().slice(0, limit) : "";
 
+// The confirmation email is HTML, and every value below comes from the
+// visitor's own form submission -- escape before it lands in markup, or a
+// name like "<img src=x onerror=...>" runs in whoever's inbox reads it.
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
+function confirmationHtml(fields: {
+  name: string;
+  budget: string;
+  urgency: string;
+  description: string;
+}) {
+  const name = escapeHtml(fields.name);
+  const budget = escapeHtml(fields.budget || "nije naveden");
+  const urgency = escapeHtml(fields.urgency || "nije navedena");
+  // Line breaks are the one thing worth preserving from a textarea; everything
+  // else is escaped first so this can't reopen the tags around it.
+  const description = escapeHtml(fields.description).replace(/\n/g, "<br>");
+
+  return `<!DOCTYPE html>
+<html lang="sr">
+  <body style="margin:0;padding:32px 16px;background:#F6F6F6;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#111111;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;background:#ffffff;border-radius:16px;border:1px solid #e5e5e5;overflow:hidden;">
+            <tr>
+              <td align="center" style="padding:32px 32px 8px;">
+                <img src="https://www.aferadigital.rs/images/logo-mark.png" width="72" alt="Afera Digital" style="display:block;width:72px;height:auto;">
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:16px 32px 0;">
+                <p style="font-size:16px;line-height:1.6;margin:0 0 16px;">Zdravo ${name},</p>
+                <p style="font-size:16px;line-height:1.6;margin:0 0 16px;">Hvala na poruci! Primili smo vaš upit i javljamo se u roku od 24h.</p>
+                <p style="font-size:16px;line-height:1.6;margin:0 0 8px;">Ukratko, ovo ste nam poslali:</p>
+                <p style="font-size:14px;line-height:1.6;margin:0 0 16px;color:#525252;">
+                  &bull; Budžet: ${budget}<br>
+                  &bull; Hitnost: ${urgency}
+                </p>
+                <p style="font-size:14px;line-height:1.6;margin:0 0 24px;padding:12px 16px;background:#F6F6F6;border-radius:8px;color:#111111;">${description}</p>
+                <p style="font-size:16px;line-height:1.6;margin:0 0 24px;">Ako u međuvremenu želite nešto da dodate, samo odgovorite na ovaj mejl.</p>
+                <p style="font-size:16px;line-height:1.6;margin:0;">Vukašin i Andrej<br><span style="color:#525252;">Afera Digital</span></p>
+              </td>
+            </tr>
+            <tr>
+              <td style="height:32px;"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+}
+
 export async function POST(request: Request) {
   let body: Record<string, unknown>;
   try {
@@ -124,6 +185,8 @@ export async function POST(request: Request) {
         to: [email],
         replyTo: TO_EMAILS[0],
         subject: "Primili smo vaš upit — Afera Digital",
+        html: confirmationHtml({ name, budget, urgency, description }),
+        // Plain-text fallback for clients that don't render HTML.
         text: [
           `Zdravo ${name},`,
           "",
