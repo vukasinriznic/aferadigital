@@ -22,8 +22,10 @@ Fontovi: **Syne 800** — koristi se ISKLJUČIVO za reč "AFERA" na hub-u (`font
 ## Deployment
 
 - GitHub: `vukasinriznic/aferadigital` (repo korisnik sam napravio)
-- Vercel projekat: `aferadigital`, live na `https://aferadigital.vercel.app`
-- `src/lib/site.ts` → `SITE_URL` = trenutno Vercel URL, **promeniti na pravi domen** kad se kupi (gradi canonical/sitemap/OG linkove)
+- Vercel projekat: `aferadigital` — production domen je **`www.aferadigital.rs`** (apex `aferadigital.rs` 308-redirect-uje na `www`, tako ga je Vercel sam postavio). `aferadigital.vercel.app` i dalje radi kao fallback.
+- `src/lib/site.ts` → `SITE_URL = "https://www.aferadigital.rs"` (ažurirano kad je domen proradio)
+- Domen kupljen kod **Mint (mint.rs)**, ~1.495 din prva godina (popust), obnova ~2.699 din/god. Nameserveri: **`ns20.mint.rs` / `ns21.mint.rs`** (NE podrazumevani `ns1-4.mint.rs` koje RNIDS dodeli pri registraciji — vidi gotcha ispod ako se ikad menja DNS zona).
+- Google Search Console: verifikovan (`URL prefix`, HTML fajl metoda — `public/google6e65d3afa07b4e39.html`, NE brisati taj fajl ili se gubi verifikacija), sitemap.xml predat i obrađen (2/2 stranice otkrivene).
 - Lokalni dev: `npm run dev -- -p 3100` (port 3000 često zauzet drugom sesijom/projektom)
 
 ## Mejl (Resend) — VAŽNO, lako se pokvari
@@ -46,6 +48,9 @@ Honeypot polje (`website`, vizuelno van ekrana + `tabIndex={-1}` + `aria-hidden`
 - **Browser pane u ovom alatu ne kompozituje frejmove dok korisnik eksplicitno ne otvori/prikaže panel na svojoj strani** — `document.visibilityState` ostaje `"hidden"` čak i posle `tabs_select` (fronting). Dok je tako: `computer{screenshot}` baca grešku, CSS tranzicije/rAF-animacije ostaju vizuelno "zaleđene" (getComputedStyle vraća staru vrednost čak i uz `!important` force), `setInterval`/`setTimeout` se throttluju na ~1/sec. **Rešenje: ne veruj vizuelnim proverama dok korisnik eksplicitno ne potvrdi da je panel otvoren.** Kad JESTE otvoren (korisnik potvrdio), screenshot i animacije rade normalno — više uzastopnih `computer{screenshot}` poziva u istom `browser_batch` uspešno je uhvatilo intro animaciju i crossfade uživo.
 - **`visibility:hidden` na wrapper-u oko `{children}` je NUŽAN dok intro overlay traje** — bez toga se cela stranica ispod (pozadinska slika, avatari, sopstvene `Reveal` fade-up animacije) renderuje i animira NEVIDLJIVO ispod neprozirnog overlay-a, trošeći frame-budžet i praveći sečkanje. `visibility:hidden` elementi se preskaču pri crtanju (paint), ali se slike i dalje učitavaju i `whileInView` (IntersectionObserver-driven, ne mari za `visibility`) animacije i dalje odrade svoj posao — spremno čim se otkrije.
 - **Crossfade sadržaja:** `visibility` prelazi u `visible` TAČNO u trenutku kad overlay počinje da se gasi (`phase === "fading"`), sa `opacity` tranzicijom od 400ms paralelno sa overlay-evim fade-om — daje utisak da sadržaj "izranja" ispod loga koji nestaje, umesto da iskoči instant.
+- **DNS zona kod Mint-a (mint.rs) NIJE ista stvar kao nameserveri koje RNIDS dodeli pri registraciji.** Pri registraciji domena, RNIDS automatski delegira na `ns1-4.mint.rs` (legacy/default). Ali kad se u Mint-ovom "Upravljanje DNS zonama" panelu napravi nova zona (zeleno "+" dugme), ona živi na SASVIM DRUGOM paru nameservera (`ns20.mint.rs`/`ns21.mint.rs` u ovom slučaju — verovatno se dodeljuju dinamički/nasumično po zoni). Uneti A/CNAME zapisi u toj zoni su "mrtvi" dok se domenu ručno ne promene nameserveri (Moji domeni → Podešavanje nameservera) da pokazuju TAČNO na te iste `ns20/ns21`. Simptom bez ovog fix-a: `SERVFAIL` na javnim resolverima (Google/Cloudflare), ne obično "not found" — jer `ns1-4.mint.rs` ni ne znaju za tu zonu. Provera: `nslookup -type=NS <domen> a.nic.rs` (šta RNIDS misli) vs. koji NS zapisi zapravo postoje u kreiranoj zoni — moraju da se poklapaju.
+- **RNIDS zahteva potvrdu vlasništva mejlom posle registracije** (link u automatskom mejlu) pre nego što DNS zona uopšte postane vidljiva/aktivna kod registra — bez te potvrde, "Upravljanje DNS zonama" panel prikazuje prazno ("Ništa nije pronađeno") iako je porudžbina uspešno završena i domen "Aktivan" u "Moji domeni".
+- **Promena nameservera kod `.rs` TLD-a propagira BRŽE nego što izgleda da bi trebalo** — u ovoj sesiji je puna propagacija (svi javni resolveri + HTTPS/SSL sertifikat generisan) prošla za manje od sat vremena, ne obećanih 2-24h. Lokalni ISP/ruter keš na strani korisnika i dalje može duže da drži staru "ne postoji" informaciju nezavisno od toga — testirati sa mobilnih podataka (ne WiFi) za nezavisnu proveru.
 
 ## Dizajn odluke (i zašto)
 
@@ -65,12 +70,14 @@ Honeypot polje (`website`, vizuelno van ekrana + `tabIndex={-1}` + `aria-hidden`
 
   NFC kartice za recenzije 👉 @dajpeticu
   ```
-- Link u bio-u: `aferadigital.vercel.app` (promeniti kad domen bude gotov)
+- Link u bio-u: `www.aferadigital.rs` (ažurirano)
+
+## Rešeno (nekad otvoreno pitanje, sad zatvoreno)
+
+- **Andrejev broj telefona:** dugme "Pozovite nas" NAMERNO zove samo Vukašinov broj (isti kao na portfoliju) — korisnikova odluka, jer zajednički `kontakt.afera@gmail.com` mejl (oba imaju pristup) već pokriva da Andrej vidi svaki upit. Ne treba drugo dugme/broj.
 
 ## Otvoreno / sledeći koraci
 
-1. **Domen** — u toku. `afera.rs` i `aferadigital.rs` su SLOBODNI (provereno WHOIS-om na RNIDS); `afera.digital` i `afera.com` su ZAUZETI. Preporuka je bila `afera.rs` (kraći, lakši za mejl). Cene nisu pouzdano provereno (registrari blokiraju/JS-render-uju cenovnike) — korisnik treba sam da uporedi 2-3 RNIDS ovlašćena registra.
-2. Kad domen stigne: Vercel Domains → DNS zapisi → `SITE_URL` u `site.ts` → Resend domain verifikacija (DNS zapisi) → `CONTACT_FROM_EMAIL` env varijabla (uključuje auto-odgovor) → eventualno vratiti oba mejla u `CONTACT_TO_EMAIL`.
-3. Andrejev broj telefona — dugme "Pozovite nas" trenutno zove SAMO Vukašinov broj (`+381655339481`, isti kao na portfoliju). Pitanje da li treba i Andrejev/zajednički još nije rešeno.
-4. `public/images/Logo.PNG` — verovatno može da se obriše (neiskorišćen), ali nije brisan bez eksplicitnog "da".
-5. Rate-limit je po instanci, ne globalan — ako ikad zatreba pravi globalni limit, treba Upstash/Redis ili Vercel KV.
+1. **Resend domain verifikacija** — sledeći korak. Resend.com/domains → Add Domain `aferadigital.rs` (ili `www.aferadigital.rs`, proveriti šta Resend traži) → DNS zapisi (SPF/DKIM, TXT/CNAME) → uneti u isti Mint DNS zona panel (`ns20/ns21.mint.rs` zona, ne zaboraviti — vidi gotcha gore) → kad se verifikuje: `CONTACT_FROM_EMAIL` env varijabla u Vercel (npr. `Afera Digital <kontakt@aferadigital.rs>`) → auto-odgovor posetiocu se AUTOMATSKI uključi (kod već postoji, čeka ovu varijablu) → vratiti `CONTACT_TO_EMAIL` na obe adrese razdvojene zarezom ako se odluči da oba dobijaju (trenutno samo `kontakt.afera@gmail.com`).
+2. `public/images/Logo.PNG` — verovatno može da se obriše (neiskorišćen), ali nije brisan bez eksplicitnog "da".
+3. Rate-limit je po instanci, ne globalan — ako ikad zatreba pravi globalni limit, treba Upstash/Redis ili Vercel KV.
