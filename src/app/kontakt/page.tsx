@@ -25,7 +25,15 @@ export const metadata: Metadata = {
 
 export default function KontaktPage() {
   return (
-    <div className="brand-glow relative flex flex-1 flex-col overflow-hidden">
+    <div className="relative flex flex-1 flex-col overflow-hidden bg-surface">
+      <Image
+        src="/clouds.jpg"
+        alt=""
+        fill
+        aria-hidden
+        className="pointer-events-none object-cover"
+      />
+
       <div className="relative mx-auto w-full max-w-3xl px-5 pt-7 sm:px-10 sm:pt-8">
         <Link
           href="/"
