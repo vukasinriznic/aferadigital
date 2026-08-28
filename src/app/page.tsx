@@ -15,15 +15,7 @@ export default function Home() {
     // Only the hub plays the intro: it is where the bio link lands, and the
     // form should open straight away for anyone linked to it directly.
     <IntroLoader>
-      <div className="relative flex flex-1 flex-col overflow-hidden bg-surface">
-        <Image
-          src="/cta-waves.svg"
-          alt=""
-          fill
-          aria-hidden
-          className="pointer-events-none object-cover"
-        />
-
+      <div className="brand-glow relative flex flex-1 flex-col overflow-hidden">
         <div className="relative mx-auto flex w-full max-w-xl flex-col px-5 pb-12 pt-10 sm:px-8 sm:pb-16 sm:pt-14">
           <Reveal className="flex flex-col items-center text-center">
             <Image
