@@ -46,14 +46,25 @@ export function IntroLoader({ children }: { children: ReactNode }) {
 
   return (
     <>
-      {/* Hidden rather than unmounted, so images fetch and the page's own
-          Reveal animations (IntersectionObserver-driven, so they fire
-          regardless of visibility) finish quietly and are already settled
-          when the cover clears. Hidden elements are skipped at paint time,
+      {/* Hidden rather than unmounted through "intro", so images fetch and the
+          page's own Reveal animations (IntersectionObserver-driven, so they
+          fire regardless of visibility) finish quietly and are already
+          settled once revealed. Hidden elements are skipped at paint time,
           which is what actually stops them competing with the intro for
-          frames -- rendering them at full opacity underneath an opaque
-          cover was invisible to the eye but not to the browser. */}
-      <div style={{ visibility: phase === "gone" ? "visible" : "hidden" }}>
+          frames -- rendering them at full opacity underneath an opaque cover
+          was invisible to the eye but not to the browser.
+          "fading" is where the crossfade happens: visibility flips to visible
+          the instant the cover starts dissolving, and opacity eases in over
+          the same span, so the page appears gradually through the cover
+          rather than snapping in the moment it's gone. */}
+      <div
+        style={{
+          visibility: phase === "cover" || phase === "intro" ? "hidden" : "visible",
+          opacity: phase === "cover" || phase === "intro" ? 0 : 1,
+          transition:
+            phase === "fading" ? `opacity ${FADE_MS}ms ease-out` : undefined,
+        }}
+      >
         {children}
       </div>
 
