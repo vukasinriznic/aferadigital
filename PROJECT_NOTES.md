@@ -86,7 +86,6 @@ Honeypot polje (`website`, vizuelno van ekrana + `tabIndex={-1}` + `aria-hidden`
 
 ## Otvoreno / sledeći koraci
 
-1. `public/images/Logo.PNG` — verovatno može da se obriše (neiskorišćen), ali nije brisan bez eksplicitnog "da".
-2. Rate-limit je po instanci, ne globalan — ako ikad zatreba pravi globalni limit, treba Upstash/Redis ili Vercel KV.
+Nema otvorenih stavki. Jedina preostala napomena: rate-limit u `route.ts` je po instanci, ne globalan — ako ikad zatreba pravi globalni limit, treba Upstash/Redis ili Vercel KV. `public/images/Logo.PNG` (neiskorišćen original) je obrisan.
 
 Nema više otvorenih stavki van ove dve sitnice — sajt je potpuno funkcionalan (domen, forma, mejl sa HTML potvrdom i logom, Gravatar avatar, SEO indeksiranje).
