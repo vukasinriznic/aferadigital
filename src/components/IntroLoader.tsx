@@ -46,7 +46,16 @@ export function IntroLoader({ children }: { children: ReactNode }) {
 
   return (
     <>
-      {children}
+      {/* Hidden rather than unmounted, so images fetch and the page's own
+          Reveal animations (IntersectionObserver-driven, so they fire
+          regardless of visibility) finish quietly and are already settled
+          when the cover clears. Hidden elements are skipped at paint time,
+          which is what actually stops them competing with the intro for
+          frames -- rendering them at full opacity underneath an opaque
+          cover was invisible to the eye but not to the browser. */}
+      <div style={{ visibility: phase === "gone" ? "visible" : "hidden" }}>
+        {children}
+      </div>
 
       {phase !== "gone" && (
         <div
