@@ -75,9 +75,13 @@ Honeypot polje (`website`, vizuelno van ekrana + `tabIndex={-1}` + `aria-hidden`
 ## Rešeno (nekad otvoreno pitanje, sad zatvoreno)
 
 - **Andrejev broj telefona:** dugme "Pozovite nas" NAMERNO zove samo Vukašinov broj (isti kao na portfoliju) — korisnikova odluka, jer zajednički `kontakt.afera@gmail.com` mejl (oba imaju pristup) već pokriva da Andrej vidi svaki upit. Ne treba drugo dugme/broj.
+- **Resend domain verifikacija** — ZAVRŠENO. `aferadigital.rs` verifikovan (DKIM TXT `resend._domainkey`, SPF CNAME `rsend`/`send`, DMARC TXT `_dmarc` — svi u istoj Mint `ns20/ns21` DNS zoni). `CONTACT_FROM_EMAIL="Afera Digital <kontakt@aferadigital.rs>"` postavljen u Vercel (Production). Auto-odgovor posetiocu radi, i Reply-To na oba mejla (upit → posetiočev mejl, potvrda → `kontakt.afera@gmail.com`) potvrđeno testirano u Gmail-u (Reply dugme tačno popuni pravu adresu). `CONTACT_TO_EMAIL` OSTAJE samo `kontakt.afera@gmail.com` (korisnikova odluka, ne oba mejla).
+  - **Mint DNS gotcha:** TXT zapisi MORAJU biti pod navodnicima (`"p=MIGf..."`) — bez njih panel baca "This record must contain a quoted string". Name/Content polja ne smeju da se završavaju tačkom (`.`) — panel baca "must contain a valid hostname, do not end with a dot".
+  - **Pažnja za sledeći put:** lako je pobrkati `CONTACT_TO_EMAIL` (primalac upita) sa `CONTACT_FROM_EMAIL` (pošiljalac auto-odgovora) u Vercel panelu — dešava se da se prava vrednost jedne slučajno upiše u drugu. Uvek proveriti da su OBE ispravno postavljene pre Redeploy-a.
 
 ## Otvoreno / sledeći koraci
 
-1. **Resend domain verifikacija** — sledeći korak. Resend.com/domains → Add Domain `aferadigital.rs` (ili `www.aferadigital.rs`, proveriti šta Resend traži) → DNS zapisi (SPF/DKIM, TXT/CNAME) → uneti u isti Mint DNS zona panel (`ns20/ns21.mint.rs` zona, ne zaboraviti — vidi gotcha gore) → kad se verifikuje: `CONTACT_FROM_EMAIL` env varijabla u Vercel (npr. `Afera Digital <kontakt@aferadigital.rs>`) → auto-odgovor posetiocu se AUTOMATSKI uključi (kod već postoji, čeka ovu varijablu) → vratiti `CONTACT_TO_EMAIL` na obe adrese razdvojene zarezom ako se odluči da oba dobijaju (trenutno samo `kontakt.afera@gmail.com`).
-2. `public/images/Logo.PNG` — verovatno može da se obriše (neiskorišćen), ali nije brisan bez eksplicitnog "da".
-3. Rate-limit je po instanci, ne globalan — ako ikad zatreba pravi globalni limit, treba Upstash/Redis ili Vercel KV.
+1. `public/images/Logo.PNG` — verovatno može da se obriše (neiskorišćen), ali nije brisan bez eksplicitnog "da".
+2. Rate-limit je po instanci, ne globalan — ako ikad zatreba pravi globalni limit, treba Upstash/Redis ili Vercel KV.
+
+Nema više otvorenih stavki van ove dve sitnice — sajt je potpuno funkcionalan (domen, forma, mejl, SEO indeksiranje).
