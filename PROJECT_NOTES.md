@@ -79,9 +79,14 @@ Honeypot polje (`website`, vizuelno van ekrana + `tabIndex={-1}` + `aria-hidden`
   - **Mint DNS gotcha:** TXT zapisi MORAJU biti pod navodnicima (`"p=MIGf..."`) — bez njih panel baca "This record must contain a quoted string". Name/Content polja ne smeju da se završavaju tačkom (`.`) — panel baca "must contain a valid hostname, do not end with a dot".
   - **Pažnja za sledeći put:** lako je pobrkati `CONTACT_TO_EMAIL` (primalac upita) sa `CONTACT_FROM_EMAIL` (pošiljalac auto-odgovora) u Vercel panelu — dešava se da se prava vrednost jedne slučajno upiše u drugu. Uvek proveriti da su OBE ispravno postavljene pre Redeploy-a.
 
+- **HTML potvrda posetiocu (sa logom) + Gravatar avatar pošiljaoca** — ZAVRŠENO. Auto-odgovor u `route.ts` (`confirmationHtml()`) sad šalje HTML mejl sa logom (`https://www.aferadigital.rs/images/logo-mark.png`, javno hostovana slika, ne CID attachment) umesto samo plain-text; sva korisnička polja (ime, opis, budžet, hitnost) prolaze kroz `escapeHtml()` pre ubacivanja u markup — bez ovoga bi ime tipa `<img onerror=...>` moglo da izvrši kod u tuđem inbox-u. `text` fallback je zadržan za klijente koji ne prikazuju HTML.
+  - **Ikonica pošiljaoca u Gmail-u (avatar pored "Afera Digital") NIJE deo HTML sadržaja mejla** — to je Gravatar, sistem vezan za samu email adresu. Zahtevalo je: (1) `kontakt@aferadigital.rs` da može da PRIMA mejl (do sad je bio samo za slanje) → **ImprovMX** (besplatan forwarding, do 25 alias-a) sa MX (`mx1`/`mx2.improvmx.com`, prio 10/20) + SPF TXT (`v=spf1 include:spf.improvmx.com ~all`) zapisima u istoj Mint zoni, `*@aferadigital.rs` → `kontakt.afera@gmail.com`; (2) Gravatar nalog registrovan NA `kontakt@aferadigital.rs`, verifikovan preko tog prosleđenog mejla.
+  - **Gravatar image gotcha:** krug u avataru seče uglove kvadratne slike — ako logo/dizajn ide skoro do ivice kvadrata (kao `logo-mark.png`, koji je namerno zumiran do ivice za intro animaciju), krajevi mu se odseku. Rešenje: `public/images/logo-gravatar.png` — poseban asset gde je canvas izračunat tako da NAJUDALJENIJA tačka dizajna od centra bude unutar upisanog kruga (ne samo unutar kvadrata), sa ~18% dodatne margine. Gravatar ne dozvoljava da se slika umanji ispod 100% u editoru — margina MORA biti već ugrađena u sam fajl.
+  - Provera bez čekanja Gmail keša: `https://www.gravatar.com/avatar/<md5(email)>?d=404` — vraća 404 ako nema postavljene slike, 200+sliku ako ima. Gmail ipak ima SOPSTVENI keš avatara pošiljalaca nezavisno od ovoga — može da potraje da se osveži u samom Gmail UI-ju čak i kad je Gravatar strana potvrđeno ispravna.
+
 ## Otvoreno / sledeći koraci
 
 1. `public/images/Logo.PNG` — verovatno može da se obriše (neiskorišćen), ali nije brisan bez eksplicitnog "da".
 2. Rate-limit je po instanci, ne globalan — ako ikad zatreba pravi globalni limit, treba Upstash/Redis ili Vercel KV.
 
-Nema više otvorenih stavki van ove dve sitnice — sajt je potpuno funkcionalan (domen, forma, mejl, SEO indeksiranje).
+Nema više otvorenih stavki van ove dve sitnice — sajt je potpuno funkcionalan (domen, forma, mejl sa HTML potvrdom i logom, Gravatar avatar, SEO indeksiranje).
